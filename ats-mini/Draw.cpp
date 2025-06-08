@@ -198,9 +198,9 @@ void drawZoomedMenu(const char *text)
 }
 
 //
-// Show "Loading SSB" message
+// Show overlay message in large letters
 //
-void drawLoadingSSB()
+void drawMessage(const char *msg)
 {
   if(sleepOn()) return;
 
@@ -208,7 +208,7 @@ void drawLoadingSSB()
   spr.fillSmoothRoundRect(80, 40, 160, 40, 4, TH.text);
   spr.fillSmoothRoundRect(81, 41, 158, 38, 4, TH.menu_bg);
   spr.setTextColor(TH.text, TH.menu_bg);
-  spr.drawString("Loading SSB", 160, 62, 4);
+  spr.drawString(msg, 160, 62, 4);
   spr.pushSprite(0, 0);
 }
 
@@ -378,14 +378,12 @@ static void drawScale(uint32_t freq)
     int16_t x = i * 8 - offset;
     if(freq >= minFreq && freq <= maxFreq)
     {
-      uint16_t lineColor =
-        i == 20 && (offset == 0 || ((freq % 5) == 0 && offset == 1)) ?
-          TH.scale_pointer : TH.scale_line;
+      uint16_t lineColor = (i==20) && (!offset || (!(freq%5) && offset==1))?
+        TH.scale_pointer : TH.scale_line;
       if(spectrumScan && (spectrumState == 0)) // If Scpectrum Scan/Signal Survey option is enabled AND the state flag is "requested".
       {
         rx.setFrequency(freq * 10);
         rx.getCurrentReceivedSignalQuality(); // For more precision adjust MAX_DELAY_AFTER_SET_FREQUENCY on SI4735.h to at least 60ms (according to SI47xx Programming Guide, tuning takes at least 60ms com complete after issuing the command!)
-
         int rssi = rx.getCurrentRSSI();
         int slevel = getStrength(rssi);
 
@@ -421,6 +419,10 @@ static void drawScale(uint32_t freq)
       {
         spr.drawLine(x, 169, x, 160, lineColor);
       }
+
+      int rssi = 20 * scanGetRSSI(freq * 10);
+      if(rssi > 0)
+        spr.fillRect(x-1, 170-rssi, 3, rssi, rssi>15? TH.smeter_bar_plus:TH.smeter_bar);
     }
   }
   

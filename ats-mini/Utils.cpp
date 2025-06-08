@@ -75,7 +75,7 @@ void loadSSB(uint8_t bandwidth, bool draw)
 {
   if(!ssbLoaded)
   {
-    if(draw) drawLoadingSSB();
+    if(draw) drawMessage("Loading SSB");
     // You can try rx.setI2CFastModeCustom(700000); or greater value
     rx.setI2CFastModeCustom(400000);
     rx.loadPatch(ssb_patch_content, sizeof(ssb_patch_content), bandwidth);
@@ -315,6 +315,14 @@ bool clockTickTime()
 
   // No screen update
   return(false);
+}
+
+//
+// Check if given frequency belongs to given band
+//
+bool isFreqInBand(const Band *band, uint16_t freq)
+{
+  return((freq>=band->minimumFreq) && (freq<=band->maximumFreq));
 }
 
 //

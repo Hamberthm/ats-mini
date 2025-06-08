@@ -38,7 +38,7 @@ HEADERS = \
 SRC = \
 	$(INO) Utils.cpp Rotary.cpp Button.cpp Draw.cpp Menu.cpp \
 	Station.cpp Battery.cpp Storage.cpp Themes.cpp Remote.cpp \
-	Network.cpp EIBI.cpp
+	Network.cpp EIBI.cpp Scan.cpp
 
 all: build
 

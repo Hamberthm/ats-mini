@@ -11,6 +11,7 @@
 #include <ESPAsyncWebServer.h>
 #include <NTPClient.h>
 #include <Preferences.h>
+#include <ESPmDNS.h>
 
 #define CONNECT_TIME  3000  // Time of inactivity to start connecting WiFi
 
@@ -146,6 +147,8 @@ void netStop()
 {
   wifi_mode_t mode = WiFi.getMode();
 
+  MDNS.end();
+
   // If network connection up, shut it down
   if((mode==WIFI_STA) || (mode==WIFI_AP_STA))
     WiFi.disconnect(true);
@@ -214,6 +217,10 @@ void netInit(uint8_t netMode, bool showStatus)
   {
     // Initialize web server for remote configuration
     webInit();
+
+    // Initialize mDNS
+    MDNS.begin("atsmini"); // Set the hostname to "atsmini.local"
+    MDNS.addService("http", "tcp", 80);
   }
 }
 
@@ -260,7 +267,7 @@ static bool wifiInitAP()
 
   drawScreen(
     ("Use Access Point " + String(apSSID)).c_str(),
-    ("IP : " + WiFi.softAPIP().toString()).c_str()
+    ("IP : " + WiFi.softAPIP().toString() + " or atsmini.local").c_str()
   );
 
   ajaxInterval = 2500;
@@ -325,7 +332,7 @@ static bool wifiConnect()
     // WiFi connection succeeded
     drawScreen(
       ("Connected to WiFi network (" + WiFi.SSID() + ")").c_str(),
-      ("IP : " + WiFi.localIP().toString()).c_str()
+      ("IP : " + WiFi.localIP().toString() + " or atsmini.local").c_str()
     );
     // Done
     ajaxInterval = 1000;

@@ -81,6 +81,7 @@ Band *getCurrentBand() { return(&bands[bandIdx]); }
 #define MENU_AVC          9
 #define MENU_SOFTMUTE    10
 #define MENU_SETTINGS    11
+#define MENU_SCAN   	 12
 
 int8_t menuIdx = MENU_VOLUME;
 
@@ -98,6 +99,7 @@ static const char *menu[] =
   "AVC",
   "SoftMute",
   "Settings",
+  "Scan",
 };
 
 //
@@ -791,6 +793,12 @@ static void clickMenu(int cmd, bool shortPress)
       // No AVC in FM mode
       if(currentMode!=FM) currentCmd = CMD_AVC;
       break;
+
+    case MENU_SCAN:
+      // Run a band scan around current frequency with the same
+      // step as scale resolution (10kHz for AM, 100kHz for FM)
+      scanRun(currentFrequency, 10);
+      break;
   }
 }
 
@@ -879,10 +887,10 @@ bool clickHandler(uint16_t cmd, bool shortPress)
     case CMD_SETTINGS: clickSettings(settingsIdx, shortPress);break;
     case CMD_MEMORY:   clickMemory(memoryIdx, shortPress);break;
     case CMD_WIFIMODE: clickWiFiMode(wifiModeIdx, shortPress);break;
-    case CMD_VOLUME:   clickVolume(shortPress); break;
-    case CMD_SQUELCH:  clickSquelch(shortPress); break;
-    case CMD_SEEK:     clickSeek(shortPress); break;
-    case CMD_FREQ:     return clickFreq(shortPress);
+    case CMD_VOLUME:   clickVolume(shortPress);break;
+    case CMD_SQUELCH:  clickSquelch(shortPress);break;
+    case CMD_SEEK:     clickSeek(shortPress);break;
+    case CMD_FREQ:     return(clickFreq(shortPress));
     default:           return(false);
   }
 

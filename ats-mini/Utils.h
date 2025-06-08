@@ -34,4 +34,7 @@ void clockRefreshTime();
 // Check if given memory entry belongs to a band
 bool isMemoryInBand(const Band *band, const Memory *memory);
 
+// Check if given frequency belongs to a band
+bool isFreqInBand(const Band *band, uint16_t freq);
+
 #endif // UTILS_H

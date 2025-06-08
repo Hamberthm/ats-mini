@@ -217,8 +217,9 @@ const StationSchedule *eibiLookup(uint16_t freq, uint8_t hour, uint8_t minute, s
   if(!file) return(NULL);
 
   // Set up binary search
+  ssize_t total = file.size() / sizeof(entry);
   ssize_t left  = 0;
-  ssize_t right = file.size() / sizeof(entry);
+  ssize_t right = total;
   ssize_t match = -1;
   ssize_t mid;
 
@@ -227,7 +228,11 @@ const StationSchedule *eibiLookup(uint16_t freq, uint8_t hour, uint8_t minute, s
   {
     // Go to the middle entry
     mid = (left + right) / 2;
-    if(offset) *offset = mid * sizeof(entry);
+
+    // Save current offset, correcting for file size
+    if(offset) *offset = (mid<0? 0 : mid>=total? total-1 : mid) * sizeof(entry);
+
+    // Go to the middle entry
     if(!file.seek(mid * sizeof(entry), fs::SeekSet))
     {
       file.close();

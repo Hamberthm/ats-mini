@@ -49,7 +49,7 @@ float scanGetSNR(uint16_t freq)
   return((result - scanMinSNR) / (float)(scanMaxSNR - scanMinSNR + 1));
 }
 
-static void scanInit(uint16_t centerFreq, uint16_t step)
+static void scanInit(uint16_t centerFreq, uint16_t step, uint16_t points)
 {
   scanStep    = step;
   scanCount   = 0;
@@ -61,11 +61,11 @@ static void scanInit(uint16_t centerFreq, uint16_t step)
   scanTime    = millis();
 
   const Band *band = getCurrentBand();
-  int freq = scanStep * (centerFreq / scanStep - SCAN_POINTS / 2);
+  int freq = scanStep * (centerFreq / scanStep - points / 2);
 
   // Adjust to band boundaries
-  if(freq + scanStep * (SCAN_POINTS - 1) > band->maximumFreq)
-    freq = band->maximumFreq - scanStep * (SCAN_POINTS - 1);
+  if(freq + scanStep * (points - 1) > band->maximumFreq)
+    freq = band->maximumFreq - scanStep * (points - 1);
   if(freq < band->minimumFreq)
     freq = band->minimumFreq;
   scanStartFreq = freq;
@@ -74,13 +74,13 @@ static void scanInit(uint16_t centerFreq, uint16_t step)
   memset(scanData, 0, sizeof(scanData));
 }
 
-static bool scanTickTime()
+static bool scanTickTime(uint16_t points, uint16_t time)
 {
   // Scan must be on
-  if((scanStatus!=SCAN_RUN) || (scanCount>=SCAN_POINTS)) return(false);
+  if((scanStatus!=SCAN_RUN) || (scanCount>=points)) return(false);
 
   // Wait for the right time
-  if(millis() - scanTime < SCAN_TIME) return(true);
+  if(millis() - scanTime < time) return(true);
 
   // This is our current frequency to scan
   uint16_t freq = scanStartFreq + scanStep * scanCount;
@@ -108,7 +108,7 @@ static bool scanTickTime()
   freq += scanStep;
 
   // Set next frequency to scan or expire scan
-  if((++scanCount >= SCAN_POINTS) || !isFreqInBand(getCurrentBand(), freq))
+  if((++scanCount >= points) || !isFreqInBand(getCurrentBand(), freq))
     scanStatus = SCAN_DONE;
   else
     rx.setFrequency(freq);
@@ -123,8 +123,11 @@ static bool scanTickTime()
 //
 // Run entire scan once
 //
-void scanRun(uint16_t centerFreq, uint16_t step)
+void scanRun(uint16_t centerFreq, uint16_t step, uint16_t points, uint16_t time) //points and time are default initialized to 0 & -1 respectively, in case of no argument passed
 {
+  if((!points) || (points > SCAN_POINTS)) points = SCAN_POINTS;
+  if((time < 0) || (time > SCAN_TIME)) time = SCAN_TIME;
   drawMessage("Scanning...");
-  for(scanInit(centerFreq, step) ; scanTickTime() ; delay(SCAN_TIME));
+  for(scanInit(centerFreq, step, points) ; scanTickTime(points, time) ; delay(time));
+  rx.setFrequency(currentFrequency); //restore tunning frequency
 }

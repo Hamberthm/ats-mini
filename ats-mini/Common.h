@@ -67,6 +67,10 @@
 #define NET_CONNECT    3 // Connect to a network normally, if possible
 #define NET_SYNC       4 // Connect to sync time, then disconnect
 
+// Autoscan modes
+#define AUTOSCAN_OFF       0 // Do not make an autoscan after user input
+#define AUTOSCAN_VISIBLE   1 // Autoscan on visible scale only
+
 //
 // Data Types
 //
@@ -151,6 +155,7 @@ extern int8_t SsbSoftMuteIdx;
 extern uint8_t rdsModeIdx;
 extern uint8_t wifiModeIdx;
 extern uint8_t FmRegionIdx;
+extern uint8_t autoscanModeIdx;
 
 extern int8_t agcIdx;
 extern int8_t agcNdx;
@@ -178,7 +183,7 @@ float batteryMonitor();
 bool drawBattery(int x, int y);
 
 // Scan.c
-void scanRun(uint16_t centerFreq, uint16_t step);
+void scanRun(uint16_t centerFreq, uint16_t step, uint16_t points = 0, uint16_t time = -1);
 float scanGetRSSI(uint16_t freq);
 float scanGetSNR(uint16_t freq);
 

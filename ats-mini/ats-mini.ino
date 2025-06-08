@@ -74,6 +74,7 @@ uint16_t currentBrt = 130;              // Display brightness, range = 10 to 255
 uint16_t currentSleep = DEFAULT_SLEEP;  // Display sleep timeout, range = 0 to 255 in steps of 5
 long elapsedSleep = millis();           // Display sleep timer
 bool zoomMenu = false;                  // Display zoomed menu item
+bool autoscanState = false;             // Autoscan state, false = reset, true = done
 int8_t scrollDirection = 1;             // Menu scroll direction
 
 // Background screen refresh
@@ -916,6 +917,19 @@ void loop()
   {
     if(currentCmd == CMD_NONE) needRedraw = true;
     background_timer = currentTime;
+  }
+
+  // Autoscan control. We use elapsedSleep to request a spectrum scan after a time of having used a control. After 2 seconds, a scan is requested. The scanState flag is set to "reset" after the count has started again. It's only set to 0 "request" after 2 seconds.
+  // This is designed so to avoid putting counter resets in another place on the code, it's all contained in this conditional block. 
+  if(autoscanModeIdx && ((currentTime - elapsedSleep) > 2000) && (autoscanState == 0)) // If more than 2 sec have passed and the flag is in the "reset" state, request a new scan.
+  {
+    scanRun(currentFrequency, 10, 40, 0); //Scan 40 points (screen wide) as fast as possible
+    autoscanState = 1; //scan done
+    needRedraw = true;
+  }
+  else if(((currentTime - elapsedSleep) < 2000) && (autoscanState == 1)) // If NO more than 2 sec have passed and the flag is in the "done" state, issue a reset. This is to only trigger 1 scan per control input detected.
+  {
+    autoscanState = 0; //issue a reset
   }
 
   // Redraw screen if necessary

@@ -119,7 +119,8 @@ static const char *menu[] =
 #define MENU_SLEEPMODE    10
 #define MENU_LOADEIBI     11
 #define MENU_WIFIMODE     12
-#define MENU_ABOUT        13
+#define MENU_AUTOSCAN     13
+#define MENU_ABOUT        14
 
 int8_t settingsIdx = MENU_BRIGHTNESS;
 
@@ -138,6 +139,7 @@ static const char *settings[] =
   "Sleep Mode",
   "Load EiBi",
   "Wi-Fi",
+  "Fast Autoscan",
   "About",
 };
 
@@ -242,6 +244,14 @@ static const char *uiLayoutDesc[] =
 uint8_t wifiModeIdx = NET_OFF;
 static const char *wifiModeDesc[] =
 { "Off", "AP Only", "AP+Connect", "Connect", "Sync Only" };
+
+//
+// Autoscan Mode Menu
+//
+
+uint8_t autoscanModeIdx = AUTOSCAN_OFF;
+static const char *autoscanModeDesc[] =
+{ "Off", "Visible Scale" };
 
 //
 // Step Menu
@@ -570,6 +580,16 @@ static void clickWiFiMode(uint8_t mode, bool shortPress)
   netInit(mode);
 }
 
+static void doAutoscan(int dir)
+{
+  autoscanModeIdx = wrap_range(autoscanModeIdx, dir, 0, LAST_ITEM(autoscanModeDesc));
+}
+
+static void clickAutoscan(uint8_t mode, bool shortPress)
+{
+  currentCmd = CMD_NONE;
+}
+
 static void doRDSMode(int dir)
 {
   rdsModeIdx = wrap_range(rdsModeIdx, dir, 0, LAST_ITEM(rdsMode));
@@ -836,6 +856,7 @@ static void clickSettings(int cmd, bool shortPress)
     case MENU_LOADEIBI:
       eibiLoadSchedule();
       break;
+    case MENU_AUTOSCAN:   currentCmd = CMD_AUTOSCAN;  break;
   }
 }
 
@@ -872,6 +893,7 @@ bool doSideBar(uint16_t cmd, int dir)
     case CMD_UTCOFFSET: doUTCOffset(scrollDirection * dir);break;
     case CMD_SQUELCH:   doSquelch(dir);break;
     case CMD_ABOUT:     doAbout(dir);break;
+    case CMD_AUTOSCAN:  doAutoscan(dir);break;
     default:            return(false);
   }
 
@@ -891,6 +913,7 @@ bool clickHandler(uint16_t cmd, bool shortPress)
     case CMD_SQUELCH:  clickSquelch(shortPress);break;
     case CMD_SEEK:     clickSeek(shortPress);break;
     case CMD_FREQ:     return(clickFreq(shortPress));
+    case CMD_AUTOSCAN: clickAutoscan(autoscanModeIdx, shortPress);break;
     default:           return(false);
   }
 
@@ -1145,6 +1168,30 @@ static void drawWiFiMode(int x, int y, int sx)
 
     spr.setTextDatum(MC_DATUM);
     spr.drawString(wifiModeDesc[abs((wifiModeIdx+count+i)%count)], 40+x+(sx/2), 64+y+(i*16), 2);
+  }
+}
+
+static void drawAutoscanMode(int x, int y, int sx)
+{
+  drawCommon(settings[MENU_AUTOSCAN], x, y, sx, true);
+
+  int count = ITEM_COUNT(autoscanModeDesc);
+  for(int i=-2 ; i<3 ; i++)
+  {
+    if(i==0) {
+      drawZoomedMenu(autoscanModeDesc[abs((autoscanModeIdx+count+i)%count)]);
+      spr.setTextColor(TH.menu_hl_text, TH.menu_hl_bg);
+    } else {
+      spr.setTextColor(TH.menu_item, TH.menu_bg);
+    }
+
+    // Prevent repeats for short menus
+    if (count < 5 && ((autoscanModeIdx+i) < 0 || (autoscanModeIdx+i) >= count)) {
+      continue;
+    }
+
+    spr.setTextDatum(MC_DATUM);
+    spr.drawString(autoscanModeDesc[abs((autoscanModeIdx+count+i)%count)], 40+x+(sx/2), 64+y+(i*16), 2);
   }
 }
 
@@ -1536,6 +1583,7 @@ void drawSideBar(uint16_t cmd, int x, int y, int sx)
     case CMD_SLEEP:     drawSleep(x, y, sx);     break;
     case CMD_SLEEPMODE: drawSleepMode(x, y, sx); break;
     case CMD_WIFIMODE:  drawWiFiMode(x, y, sx);  break;
+    case CMD_AUTOSCAN:  drawAutoscanMode(x, y, sx);break;
     case CMD_ZOOM:      drawZoom(x, y, sx);      break;
     case CMD_SCROLL:    drawScrollDir(x, y, sx); break;
     case CMD_UTCOFFSET: drawUTCOffset(x, y, sx); break;

@@ -1,0 +1,1 @@
+Add Scan mode.

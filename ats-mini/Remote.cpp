@@ -2,12 +2,21 @@
 #include "Themes.h"
 #include "Utils.h"
 #include "Menu.h"
+#include "Draw.h"
 
 #ifndef DISABLE_REMOTE
 
 static uint32_t remoteTimer = millis();
 static uint8_t remoteSeqnum = 0;
 static bool remoteLogOn = false;
+
+static uint8_t char2nibble(char key)
+{
+  if((key >= '0') && (key <= '9')) return(key - '0');
+  if((key >= 'A') && (key <= 'F')) return(key - 'A' + 10);
+  if((key >= 'a') && (key <= 'f')) return(key - 'a' + 10);
+  return(0);
+}
 
 //
 // Capture current screen image to the remote
@@ -213,6 +222,55 @@ static bool remoteSetMemory()
 }
 
 //
+// Set current color theme from the remote
+//
+static void remoteSetColorTheme()
+{
+  Serial.print("Enter a string of hex colors (x0001x0002...): ");
+
+  uint8_t *p = (uint8_t *)&(TH.bg);
+
+  for(int i=0 ; ; i+=sizeof(uint16_t))
+  {
+    if(i >= sizeof(ColorTheme)-offsetof(ColorTheme, bg))
+    {
+      Serial.println(" Ok");
+      break;
+    }
+
+    if(readSerialChar() != 'x')
+    {
+      Serial.println(" Err");
+      break;
+    }
+
+    p[i + 1]  = char2nibble(readSerialChar()) * 16;
+    p[i + 1] |= char2nibble(readSerialChar());
+    p[i]      = char2nibble(readSerialChar()) * 16;
+    p[i]     |= char2nibble(readSerialChar());
+  }
+
+  // Redraw screen
+  drawScreen();
+}
+
+//
+// Print current color theme to the remote
+//
+static void remoteGetColorTheme()
+{
+  Serial.printf("Color theme %s: ", TH.name);
+  const uint8_t *p = (uint8_t *)&(TH.bg);
+
+  for(int i=0 ; i<sizeof(ColorTheme)-offsetof(ColorTheme, bg) ; i+=sizeof(uint16_t))
+  {
+    Serial.printf("x%02X%02X", p[i+1], p[i]);
+  }
+
+  Serial.println();
+}
+
+//
 // Print current status to the remote
 //
 void remotePrintStatus()
@@ -374,10 +432,10 @@ int remoteDoCommand(char key)
       Serial.println(switchThemeEditor(!switchThemeEditor()) ? "Theme editor enabled" : "Theme editor disabled");
       break;
     case '!':
-      if(switchThemeEditor()) setColorTheme();
+      if(switchThemeEditor()) remoteSetColorTheme();
       break;
     case '@':
-      if(switchThemeEditor()) getColorTheme();
+      if(switchThemeEditor()) remoteGetColorTheme();
       break;
 
     default:

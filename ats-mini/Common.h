@@ -172,12 +172,6 @@ bool doSeek(int8_t dir);
 bool clickFreq(bool shortPress);
 uint8_t doAbout(int dir);
 
-// Draw.c
-void drawMessage(const char *msg);
-void drawZoomedMenu(const char *text);
-void drawScreen(const char *statusLine1 = 0, const char *statusLine2 = 0);
-void drawAboutHelp(uint8_t arrow);
-
 // Battery.c
 float batteryMonitor();
 bool drawBattery(int x, int y);
@@ -208,7 +202,6 @@ bool ntpSyncTime();
 
 void netRequestConnect();
 void netTickTime();
-void drawWiFiIndicator(int x, int y);
 
 #ifndef DISABLE_REMOTE
 // Remote.c

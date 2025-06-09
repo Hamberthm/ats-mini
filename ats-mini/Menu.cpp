@@ -3,6 +3,7 @@
 #include "Themes.h"
 #include "Utils.h"
 #include "Menu.h"
+#include "Draw.h"
 #include "EIBI.h"
 
 //
@@ -817,6 +818,7 @@ static void clickMenu(int cmd, bool shortPress)
     case MENU_SCAN:
       // Run a band scan around current frequency with the same
       // step as scale resolution (10kHz for AM, 100kHz for FM)
+      drawMessage("Scanning...");
       scanRun(currentFrequency, 10);
       break;
   }

@@ -1,4 +1,5 @@
 #include "Common.h"
+#include "Draw.h"
 #include "EIBI.h"
 
 #include <HTTPClient.h>

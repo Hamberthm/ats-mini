@@ -4,6 +4,7 @@
 #include "Storage.h"
 #include "Utils.h"
 #include "Menu.h"
+#include "Draw.h"
 
 #include <WiFi.h>
 #include <WiFiUdp.h>
@@ -119,25 +120,6 @@ char *getWiFiIPAddress()
 {
   static char ip[16];
   return strcpy(ip, WiFi.status()==WL_CONNECTED ? WiFi.localIP().toString().c_str() : "");
-}
-
-void drawWiFiIndicator(int x, int y)
-{
-  int8_t status = getWiFiStatus();
-
-  // If need to draw WiFi icon...
-  if(status || switchThemeEditor())
-  {
-    uint16_t color = (status>0) ? TH.wifi_icon_conn : TH.wifi_icon;
-
-    // For the editor, alternate between WiFi states every ~8 seconds
-    if(switchThemeEditor())
-      color = millis()&0x2000? TH.wifi_icon_conn : TH.wifi_icon;
-
-    spr.drawSmoothArc(x, 15+y, 14, 13, 150, 210, color, TH.bg);
-    spr.drawSmoothArc(x, 15+y, 9, 8, 150, 210, color, TH.bg);
-    spr.drawSmoothArc(x, 15+y, 4, 3, 150, 210, color, TH.bg);
-  }
 }
 
 //

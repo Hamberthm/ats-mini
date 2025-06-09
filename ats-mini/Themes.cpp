@@ -1,4 +1,6 @@
+#include "Common.h"
 #include "Themes.h"
+#include "Draw.h"
 
 ColorTheme theme[] =
 {
@@ -410,59 +412,6 @@ ColorTheme theme[] =
 
 uint8_t themeIdx = 0;
 int getTotalThemes() { return(ITEM_COUNT(theme)); }
-
-#ifndef DISABLE_REMOTE
-static uint8_t char2nibble(char key)
-{
-  if((key >= '0') && (key <= '9')) return(key - '0');
-  if((key >= 'A') && (key <= 'F')) return(key - 'A' + 10);
-  if((key >= 'a') && (key <= 'f')) return(key - 'a' + 10);
-  return(0);
-}
-
-void setColorTheme()
-{
-  Serial.print("Enter a string of hex colors (x0001x0002...): ");
-
-  uint8_t *p = (uint8_t *)&(theme[themeIdx].bg);
-
-  for(int i=0 ; ; i+=sizeof(uint16_t))
-  {
-    if(i >= sizeof(ColorTheme)-offsetof(ColorTheme, bg))
-    {
-      Serial.println(" Ok");
-      break;
-    }
-
-    if(readSerialChar() != 'x')
-    {
-      Serial.println(" Err");
-      break;
-    }
-
-    p[i + 1]  = char2nibble(readSerialChar()) * 16;
-    p[i + 1] |= char2nibble(readSerialChar());
-    p[i]      = char2nibble(readSerialChar()) * 16;
-    p[i]     |= char2nibble(readSerialChar());
-  }
-
-  // Redraw screen
-  drawScreen();
-}
-
-void getColorTheme()
-{
-  Serial.printf("Color theme %s: ", TH.name);
-  const uint8_t *p = (uint8_t *)&(theme[themeIdx].bg);
-
-  for(int i=0 ; i<sizeof(ColorTheme)-offsetof(ColorTheme, bg) ; i+=sizeof(uint16_t))
-  {
-    Serial.printf("x%02X%02X", p[i+1], p[i]);
-  }
-
-  Serial.println();
-}
-#endif
 
 //
 // Turn theme editor on (1) or off (0), or get current status (2)

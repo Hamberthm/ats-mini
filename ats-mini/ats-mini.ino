@@ -8,6 +8,7 @@
 #include "Rotary.h"
 #include "Button.h"
 #include "Menu.h"
+#include "Draw.h"
 #include "Storage.h"
 #include "Themes.h"
 #include "Utils.h"

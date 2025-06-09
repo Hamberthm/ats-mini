@@ -127,7 +127,6 @@ void scanRun(uint16_t centerFreq, uint16_t step, uint16_t points, uint16_t time)
 {
   if((!points) || (points > SCAN_POINTS)) points = SCAN_POINTS;
   if((time < 0) || (time > SCAN_TIME)) time = SCAN_TIME;
-  drawMessage("Scanning...");
   for(scanInit(centerFreq, step, points) ; scanTickTime(points, time) ; delay(time));
   rx.setFrequency(currentFrequency); //restore tunning frequency
 }

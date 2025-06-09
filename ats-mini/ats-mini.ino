@@ -277,7 +277,7 @@ void useBand(const Band *band)
 
   if(band->bandMode==FM)
   {
-    rx.setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
+    // setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
     // rx.setTuneFrequencyAntennaCapacitor(0);
     rx.setSeekFmLimits(band->minimumFreq, band->maximumFreq);
 
@@ -924,6 +924,7 @@ void loop()
   // This is designed so to avoid putting counter resets in another place on the code, it's all contained in this conditional block. 
   if(autoscanModeIdx && ((currentTime - elapsedSleep) > 2000) && (autoscanState == 0)) // If more than 2 sec have passed and the flag is in the "reset" state, request a new scan.
   {
+    drawMessage("Autoscan...");
     scanRun(currentFrequency, 10, 40, 0); //Scan 40 points (screen wide) as fast as possible
     autoscanState = 1; //scan done
     needRedraw = true;

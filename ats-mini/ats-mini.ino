@@ -277,7 +277,7 @@ void useBand(const Band *band)
 
   if(band->bandMode==FM)
   {
-    setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
+    rx.setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
     // rx.setTuneFrequencyAntennaCapacitor(0);
     rx.setSeekFmLimits(band->minimumFreq, band->maximumFreq);
 

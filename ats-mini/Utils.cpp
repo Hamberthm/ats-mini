@@ -35,7 +35,7 @@ const char *getVersion(bool shorter)
   static char versionString[35] = "\0";
 
   sprintf(versionString, "%s%sF/W: v%1.1d.%2.2d %s",
-    shorter ? "" : FIRMWARE_NAME,
+    shorter ? "" : RECEIVER_NAME,
     shorter ? "" : " ",
     APP_VERSION / 100,
     APP_VERSION % 100,
@@ -118,7 +118,7 @@ bool muteOn(int x)
 
 //
 // Temporarily mute sound on (true) or off (false) if not in a permanent mute state
-// Do not drive PIN_AMP_EN here because a short impulse can trigger amplifier mode D,
+// Do not call this too often because a short PIN_AMP_EN impulse can trigger amplifier mode D,
 // see the NS4160 datasheet https://esp32-si4732.github.io/ats-mini/hardware.html#datasheets
 //
 void tempMuteOn(bool x)
@@ -127,13 +127,15 @@ void tempMuteOn(bool x)
   {
     if(x)
     {
+      digitalWrite(PIN_AMP_EN, LOW);
       rx.setVolume(0);
       rx.setHardwareAudioMute(true);
     }
     else
     {
-      rx.setVolume(volume);
       rx.setHardwareAudioMute(false);
+      rx.setVolume(volume);
+      digitalWrite(PIN_AMP_EN, HIGH);
     }
   }
 }

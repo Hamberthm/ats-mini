@@ -26,7 +26,7 @@ static void drawAboutCommon(uint8_t arrow)
 
   spr.setTextDatum(TL_DATUM);
   spr.setTextColor(TH.text_muted, TH.bg);
-  spr.drawString(RECEIVER_NAME, 0, 0, 4);
+  spr.drawString(RECEIVER_DESC, 0, 0, 4);
   spr.setTextColor(TH.text, TH.bg);
   spr.drawString(getVersion(), 2, 25, 2);
 }

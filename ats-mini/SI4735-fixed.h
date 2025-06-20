@@ -43,6 +43,33 @@ class SI4735_fixed: public SI4735
       return getRdsVersionCode()? SI4735::getRdsText2B() : SI4735::getRdsText2A();
     }
 
+  void seekStationProgress(void (*showFunc)(uint16_t f), bool (*stopSeeking)(), uint8_t up_down)
+  {
+    si47x_frequency freq;
+    long elapsed_seek = millis();
+
+    // seek command does not work for SSB
+    if (lastMode == SSB_CURRENT_MODE)
+      return;
+
+    seekStation(up_down, 0);
+    do
+    {
+      delay(maxDelaySetFrequency);
+      getStatus(0, 0);
+      delay(maxDelaySetFrequency);
+      freq.raw.FREQH = currentStatus.resp.READFREQH;
+      freq.raw.FREQL = currentStatus.resp.READFREQL;
+      currentWorkFrequency = freq.value;
+      if (showFunc != NULL)
+        showFunc(freq.value);
+      if (stopSeeking != NULL)
+        if (stopSeeking())
+          return;
+
+    } while (!currentStatus.resp.VALID && !currentStatus.resp.BLTF && (millis() - elapsed_seek) < maxSeekTime);
+  }
+
 #if 0
     // Speeding up SI4735::downloadPatch() function
     bool downloadPatch(const uint8_t *ssb_patch_content, const uint16_t ssb_patch_content_size)

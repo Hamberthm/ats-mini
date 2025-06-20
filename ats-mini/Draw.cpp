@@ -22,6 +22,30 @@ void drawEepromIndicator(int x, int y)
 }
 
 //
+// Draw Bluetooth indicator
+//
+void drawBleIndicator(int x, int y)
+{
+  int8_t status = getBleStatus();
+
+  // If need to draw BLE icon...
+  if(status || switchThemeEditor())
+  {
+    uint16_t color = (status>0) ? TH.rf_icon_conn : TH.rf_icon;
+
+    // For the editor, alternate between BLE states every ~8 seconds
+    if(switchThemeEditor())
+      color = millis()&0x2000? TH.rf_icon_conn : TH.rf_icon;
+
+    spr.drawLine(x+3, y+1, x+3, y+13, color);
+    spr.drawLine(x+3, y+1, x+6, y+4, color);
+    spr.drawLine(x+6, y+4, x, y+10, color);
+    spr.drawLine(x, y+4, x+6, y+10, color);
+    spr.drawLine(x+6, y+10, x+3, y+13, color);
+  }
+}
+
+//
 // Draw WiFi indicator
 //
 void drawWiFiIndicator(int x, int y)
@@ -31,11 +55,11 @@ void drawWiFiIndicator(int x, int y)
   // If need to draw WiFi icon...
   if(status || switchThemeEditor())
   {
-    uint16_t color = (status>0) ? TH.wifi_icon_conn : TH.wifi_icon;
+    uint16_t color = (status>0) ? TH.rf_icon_conn : TH.rf_icon;
 
     // For the editor, alternate between WiFi states every ~8 seconds
     if(switchThemeEditor())
-      color = millis()&0x2000? TH.wifi_icon_conn : TH.wifi_icon;
+      color = millis()&0x2000? TH.rf_icon_conn : TH.rf_icon;
 
     spr.drawSmoothArc(x, 15+y, 14, 13, 150, 210, color, TH.bg);
     spr.drawSmoothArc(x, 15+y, 9, 8, 150, 210, color, TH.bg);

@@ -29,6 +29,8 @@
 #define BATT_OFFSET_Y    0    // Battery meter y offset
 #define WIFI_OFFSET_X  237    // WiFi x offset
 #define WIFI_OFFSET_Y    0    // WiFi y offset
+#define BLE_OFFSET_X   104    // BLE x offset
+#define BLE_OFFSET_Y     0    // BLE y offset
 
 void drawMessage(const char *msg);
 void drawZoomedMenu(const char *text);
@@ -36,6 +38,7 @@ void drawScreen(const char *statusLine1 = 0, const char *statusLine2 = 0);
 
 void drawWiFiIndicator(int x, int y);
 void drawEepromIndicator(int x, int y);
+void drawBleIndicator(int x, int y);
 void drawBandAndMode(const char *band, const char *mode, int x, int y);
 void drawFrequency(uint32_t freq, int x, int y, int ux, int uy, uint8_t hl);
 void drawLongStationName(const char *name, int x, int y);

@@ -22,6 +22,6 @@ The hardware, software and flashing documentation is available at <https://esp32
 
 ## Discuss
 
-* [GitHub Discussions](https://github.com/esp32-si4732/ats-mini/discussions) - the best place for feature requests.
+* [GitHub Discussions](https://github.com/esp32-si4732/ats-mini/discussions) - the best place for feature requests, observations, sharing, etc.
 * [TalkRadio Telegram Chat](https://t.me/talkradio/174172) - informal space to chat in Russian and English.
 * [Si4732 Mini Receiver All Bands](https://www.facebook.com/share/g/18hjHo4HEe/) - Facebook group (unofficial).

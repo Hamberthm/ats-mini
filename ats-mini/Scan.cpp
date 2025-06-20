@@ -125,8 +125,12 @@ static bool scanTickTime(uint16_t points, uint16_t time)
 //
 void scanRun(uint16_t centerFreq, uint16_t step, uint16_t points, uint16_t time) //points and time are default initialized to 0 & -1 respectively, in case of no argument passed
 {
+    // Save current frequency
+  uint16_t curFreq = rx.getFrequency();
   if((!points) || (points > SCAN_POINTS)) points = SCAN_POINTS;
   if((time < 0) || (time > SCAN_TIME)) time = SCAN_TIME;
+    // Scan the whole range
   for(scanInit(centerFreq, step, points) ; scanTickTime(points, time) ; delay(time));
-  rx.setFrequency(currentFrequency); //restore tunning frequency
+  // Restore current frequency
+  rx.setFrequency(curFreq);
 }

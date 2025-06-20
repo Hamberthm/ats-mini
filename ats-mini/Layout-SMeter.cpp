@@ -142,6 +142,9 @@ void drawLayoutSmeter(const char *statusLine1, const char *statusLine2)
   // Draw EEPROM write request icon
   drawEepromIndicator(SAVE_OFFSET_X, SAVE_OFFSET_Y);
 
+  // Draw BLE icon
+  drawBleIndicator(BLE_OFFSET_X, BLE_OFFSET_Y);
+
   // Draw battery indicator & voltage
   bool has_voltage = drawBattery(BATT_OFFSET_X, BATT_OFFSET_Y);
 

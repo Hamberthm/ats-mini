@@ -245,6 +245,9 @@ void setup()
 
   // Connect WiFi, if necessary
   netInit(wifiModeIdx);
+
+  // Start Bluetooth LE, if necessary
+  bleInit(bleModeIdx);
 }
 
 //
@@ -277,6 +280,7 @@ void useBand(const Band *band)
 
   if(band->bandMode==FM)
   {
+    // rx.setMaxDelaySetFrequency(60);
     rx.setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
     // rx.setTuneFrequencyAntennaCapacitor(0);
     rx.setSeekFmLimits(band->minimumFreq, band->maximumFreq);
@@ -284,7 +288,7 @@ void useBand(const Band *band)
     // More sensitive seek thresholds
     // https://github.com/pu2clr/SI4735/issues/7#issuecomment-810963604
     rx.setSeekFmRssiThreshold(5); // default is 20
-    rx.setSeekFmSNRThreshold(3); // default is 3
+    rx.setSeekFmSNRThreshold(2); // default is 3
 
     rx.setFMDeEmphasis(fmRegions[FmRegionIdx].value);
     rx.RdsInit();
@@ -294,13 +298,14 @@ void useBand(const Band *band)
   }
   else
   {
+    // rx.setMaxDelaySetFrequency(80);
     if(band->bandMode==AM)
     {
       rx.setAM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
       // More sensitive seek thresholds
       // https://github.com/pu2clr/SI4735/issues/7#issuecomment-810963604
-      rx.setSeekAmRssiThreshold(15); // default is 25
-      rx.setSeekAmSNRThreshold(5); // default is 5
+      rx.setSeekAmRssiThreshold(10); // default is 25
+      rx.setSeekAmSNRThreshold(3); // default is 5
     }
     else
     {
@@ -542,9 +547,9 @@ bool doTune(int8_t dir)
     tuning_timer = millis();
 #endif
 
-    // G8PTN: Used in place of rx.frequencyUp() and rx.frequencyDown()
     uint16_t step = getCurrentStep()->step;
     uint16_t stepAdjust = currentFrequency % step;
+    stepAdjust = (currentMode==FM) && (step==20)? (stepAdjust+10) % step : stepAdjust;
     step = !stepAdjust? step : dir>0? step - stepAdjust : stepAdjust;
 
     // Tune to a new frequency
@@ -702,6 +707,8 @@ void loop()
     if(revent & REMOTE_EEPROM) eepromRequestSave();
   }
 #endif
+
+  int ble_event = bleDoCommand(bleModeIdx);
 
   // Block encoder rotation when in the locked sleep mode
   if(encoderCount && sleepOn() && sleepModeIdx==SLEEP_LOCKED) encoderCount = 0;

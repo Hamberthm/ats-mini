@@ -193,6 +193,7 @@ void eepromSaveConfig()
   EEPROM.write(addr++, currentSquelch);          // Stores the current Squelch value
   EEPROM.write(addr++, FmRegionIdx);             // Stores the current FM region value
   EEPROM.write(addr++, uiLayoutIdx);             // Stores the current UI Layout index value
+  EEPROM.write(addr++, bleModeIdx);              // Stores the current Bluetooth mode index value
   EEPROM.commit();
 
   addr = EEPROM_SETP_ADDR;
@@ -271,6 +272,8 @@ void eepromLoadConfig()
   FmRegionIdx    = EEPROM.read(addr++);          // Reads the current FM region value
   FmRegionIdx    = FmRegionIdx >= getTotalFmRegions() ? 0 : FmRegionIdx;
   uiLayoutIdx    = EEPROM.read(addr++);          // Reads stored UI Layout index value
+  bleModeIdx     = EEPROM.read(addr++);          // Reads stored Bluetooth mode index value
+  bleModeIdx     = bleModeIdx >= getTotalBleModes() ? 0 : bleModeIdx;
 
   addr = EEPROM_SETP_ADDR;
   for(int i=0 ; i<getTotalBands() ; i++)

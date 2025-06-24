@@ -257,7 +257,7 @@ void clockReset()
 
 static void formatClock(uint8_t hours, uint8_t minutes)
 {
-  int t = (int)hours * 60 + minutes + getCurrentUTCOffset() * 30;
+  int t = (int)hours * 60 + minutes + getCurrentUTCOffset() * 15;
   t = t < 0? t + 24*60 : t;
   sprintf(clockText, "%02d:%02d", (t / 60) % 24, t % 60);
 }

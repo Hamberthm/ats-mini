@@ -117,7 +117,6 @@ uint8_t getRDSMode();
 
 int getCurrentUTCOffset();
 int getTotalUTCOffsets();
-const UTCOffset *getUTCOffset(uint8_t idx);
 int getTotalFmRegions();
 int getTotalBleModes();
 

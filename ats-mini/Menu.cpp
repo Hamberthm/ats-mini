@@ -205,29 +205,31 @@ static const char *sleepModeDesc[] =
 
 //
 // UTC Offset Menu
+// FIXME: add more offsets https://en.wikipedia.org/wiki/List_of_UTC_offsets
 //
 uint8_t utcOffsetIdx = 8;
 const UTCOffset utcOffsets[] =
 {
-  { -8 * 2, "UTC-8", "Fairbanks" },
-  { -7 * 2, "UTC-7", "San Francisco" },
-  { -6 * 2, "UTC-6", "Denver" },
-  { -5 * 2, "UTC-5", "Houston" },
-  { -4 * 2, "UTC-4", "New York" },
-  { -3 * 2, "UTC-3", "Rio de Janeiro" },
-  { -2 * 2, "UTC-2", "Sandwich Islands" },
-  { -1 * 2, "UTC-1", "Nuuk" },
-  {  0 * 2, "UTC+0", "Reykjavik" },
-  {  1 * 2, "UTC+1", "London" },
-  {  2 * 2, "UTC+2", "Berlin" },
-  {  3 * 2, "UTC+3", "Moscow" },
-  {  4 * 2, "UTC+4", "Yerevan" },
-  {  5 * 2, "UTC+5", "Astana" },
-  {  6 * 2, "UTC+6", "Omsk" },
-  {  7 * 2, "UTC+7", "Novosibirsk" },
-  {  8 * 2, "UTC+8", "Beijing" },
-  {  9 * 2, "UTC+9", "Yakutsk" },
-  { 10 * 2, "UTC+10", "Vladivostok" },
+  { -8 * 4, "UTC-8", "Fairbanks" },
+  { -7 * 4, "UTC-7", "San Francisco" },
+  { -6 * 4, "UTC-6", "Denver" },
+  { -5 * 4, "UTC-5", "Houston" },
+  { -4 * 4, "UTC-4", "New York" },
+  { -3 * 4, "UTC-3", "Rio de Janeiro" },
+  { -2 * 4, "UTC-2", "Sandwich Islands" },
+  { -1 * 4, "UTC-1", "Nuuk" },
+  {  0 * 4, "UTC+0", "Reykjavik" },
+  {  1 * 4, "UTC+1", "London" },
+  {  2 * 4, "UTC+2", "Berlin" },
+  {  3 * 4, "UTC+3", "Moscow" },
+  {  4 * 4, "UTC+4", "Yerevan" },
+  {  5 * 4, "UTC+5", "Astana" },
+  {  5 * 4 + 2, "UTC+5:30", "Kolkata" },
+  {  6 * 4, "UTC+6", "Omsk" },
+  {  7 * 4, "UTC+7", "Novosibirsk" },
+  {  8 * 4, "UTC+8", "Beijing" },
+  {  9 * 4, "UTC+9", "Yakutsk" },
+  { 10 * 4, "UTC+10", "Vladivostok" },
 };
 
 int getCurrentUTCOffset() { return(utcOffsets[utcOffsetIdx].offset); }

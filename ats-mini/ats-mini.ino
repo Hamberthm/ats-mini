@@ -929,7 +929,7 @@ void loop()
 
   // Autoscan control. We use elapsedSleep to request a spectrum scan after a time of having used a control. After 2 seconds, a scan is requested. The scanState flag is set to "reset" after the count has started again. It's only set to 0 "request" after 2 seconds.
   // This is designed so to avoid putting counter resets in another place on the code, it's all contained in this conditional block. 
-  if(autoscanModeIdx && ((currentTime - elapsedSleep) > 2000) && (autoscanState == 0)) // If more than 2 sec have passed and the flag is in the "reset" state, request a new scan.
+  if((autoscanModeIdx == AUTOSCAN_VISIBLE) && ((currentTime - elapsedSleep) > 2000) && (autoscanState == 0)) // If more than 2 sec have passed and the flag is in the "reset" state, request a new scan.
   {
     drawMessage("Autoscan...");
     scanRun(currentFrequency, 10, 40, 0); //Scan 40 points (screen wide) as fast as possible

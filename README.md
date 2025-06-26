@@ -1,3 +1,12 @@
+This fork includes some mods by me (Hambert):
+
+Fast Autoscan in two modes:
+
+* Visible Scale: Scans the visible range of the scale as fast as possible, 2 seconds after not touching the encoder.
+* Seamless: Scans as tunning happens, at the cost of slower tunning.
+
+Enable in Menu > Settings > F. Autoscan
+
 # ATS Mini
 
 ![](docs/source/_static/esp32-si4732-ui-theme.jpg)

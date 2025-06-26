@@ -70,6 +70,7 @@
 // Autoscan modes
 #define AUTOSCAN_OFF       0 // Do not make an autoscan after user input
 #define AUTOSCAN_VISIBLE   1 // Autoscan on visible scale only
+#define AUTOSCAN_SEAMLESS  2 // Scan as tunning happens
 
 // Bluetooth modes
 #define BLE_OFF        0 // Bluetooth is disabled

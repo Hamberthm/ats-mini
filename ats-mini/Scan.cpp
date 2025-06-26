@@ -90,7 +90,7 @@ static float scanSeamless(uint16_t freq)
 
 float scanGetRSSI(uint16_t freq)
 {
-    if(true) //put switch for Seamless Scan here
+  if(autoscanModeIdx == AUTOSCAN_SEAMLESS) //put switch for Seamless Scan here
   {
    return scanSeamless(freq);
   }

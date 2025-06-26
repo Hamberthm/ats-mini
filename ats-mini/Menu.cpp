@@ -142,7 +142,7 @@ static const char *settings[] =
   "Load EiBi",
   "Bluetooth",
   "Wi-Fi",
-  "Fast Autoscan",
+  "F. Autoscan",
   "About",
 };
 
@@ -266,7 +266,7 @@ static const char *wifiModeDesc[] =
 
 uint8_t autoscanModeIdx = AUTOSCAN_OFF;
 static const char *autoscanModeDesc[] =
-{ "Off", "Visible Scale" };
+{ "Off", "Visible Scale", "Seamless" };
 
 //
 // Step Menu

@@ -1,9 +1,11 @@
 #include "Common.h"
 #include "Utils.h"
 #include "Menu.h"
+#include <map>
 
 #define SCAN_TIME   100 // Msecs between tuning and reading RSSI
 #define SCAN_POINTS 200 // Number of frequencies to scan
+#define SCAN_SEAMLESS 41 // Max points of frequencies to save on Seamless Scan map (currently, 41 is total points and is MINIMUM)
 
 #define SCAN_OFF    0   // Scanner off, no data
 #define SCAN_RUN    1   // Scanner running
@@ -29,8 +31,70 @@ static uint8_t  scanMaxSNR;
 static inline uint8_t min(uint8_t a, uint8_t b) { return(a<b? a:b); }
 static inline uint8_t max(uint8_t a, uint8_t b) { return(a>b? a:b); }
 
+static std::map<uint16_t, float> scanMap;
+static const char *scanSeamlessLastBand = getCurrentBand()->bandName;
+static uint8_t scanSeamlessBypass = 0;
+
+static float scanSeamless(uint16_t freq)
+{
+  if(scanMap.contains(freq))
+  {
+    return((scanMap[freq] - scanMinRSSI) / (float)(scanMaxRSSI - scanMinRSSI + 1));
+  }
+
+  if (strcmp(scanSeamlessLastBand, getCurrentBand()->bandName)) //do not scan during a band change
+  {
+    scanSeamlessLastBand = getCurrentBand()->bandName;
+    scanSeamlessBypass = SCAN_SEAMLESS * 2; //hold by 2 screen refreshes at least
+  }
+
+  if (scanSeamlessBypass)
+  {
+    scanSeamlessBypass--;
+    return 0.0;
+  }
+
+  // Save current frequency
+  uint16_t curFreq = rx.getFrequency();
+
+  rx.setFrequency(freq);
+
+  if (currentMode == AM)
+    delay(30); //AM needs an extra 30 ms on top to correctly measure
+
+  // Measure RSSI/SNR values
+  rx.getCurrentReceivedSignalQuality();
+  scanMap[freq] = rx.getCurrentRSSI();
+
+  // Measure range of values
+  scanMinRSSI = scanMaxRSSI = 0;
+  for (auto it = scanMap.begin(); it != scanMap.end(); it++)
+  {
+  scanMinRSSI = min(it->second, scanMinRSSI);
+  scanMaxRSSI = max(it->second, scanMaxRSSI);
+  }
+
+  // Restore current frequency
+  rx.setFrequency(curFreq);
+
+  if (scanMap.size() > SCAN_SEAMLESS) //keep map below 45 elements (about screen wide)
+  {
+    if ((freq - scanMap.begin()->first) < (std::prev(scanMap.end())->first) - freq) //erase the farthest end of the map, measured from the current freq, that is guaranteed to be off screen
+      scanMap.erase(std::prev(scanMap.end())); //end() gives us a past-the-end theoretical iterator, we need to go back 1 iteration
+    else
+      scanMap.erase(scanMap.begin());
+  }
+
+  return((scanMap[freq] - scanMinRSSI) / (float)(scanMaxRSSI - scanMinRSSI + 1));
+}
+
 float scanGetRSSI(uint16_t freq)
 {
+    if(true) //put switch for Seamless Scan here
+  {
+   return scanSeamless(freq);
+  }
+
   // Input frequency must be in range of existing data
   if((scanStatus!=SCAN_DONE) || (freq<scanStartFreq) || (freq>=scanStartFreq+scanStep*scanCount))
     return(0.0);

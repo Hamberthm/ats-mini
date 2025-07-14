@@ -132,7 +132,7 @@ void setup()
 
   // TFT display brightness control (PWM)
   // Note: At brightness levels below 100%, switching from the PWM may cause power spikes and/or RFI
-  ledcAttach(PIN_LCD_BL, 16000, 8);  // Pin assignment, 16kHz, 8-bit
+  ledcAttach(PIN_LCD_BL, 32000, 8);  // Pin assignment, 16kHz, 8-bit
   ledcWrite(PIN_LCD_BL, 0);          // Default value 0%
 
   // TFT display setup
@@ -282,7 +282,7 @@ void useBand(const Band *band)
   {
     // rx.setMaxDelaySetFrequency(60);
     rx.setFM(band->minimumFreq, band->maximumFreq, band->currentFreq, getCurrentStep()->step);
-    // rx.setTuneFrequencyAntennaCapacitor(0);
+    rx.setTuneFrequencyAntennaCapacitor(0);
     rx.setSeekFmLimits(band->minimumFreq, band->maximumFreq);
 
     // More sensitive seek thresholds
@@ -320,7 +320,7 @@ void useBand(const Band *band)
     }
 
     // Set the tuning capacitor for SW or MW/LW
-    // rx.setTuneFrequencyAntennaCapacitor((band->bandType == MW_BAND_TYPE || band->bandType == LW_BAND_TYPE) ? 0 : 1);
+    rx.setTuneFrequencyAntennaCapacitor((band->bandType == MW_BAND_TYPE || band->bandType == LW_BAND_TYPE) ? 0 : 1);
 
     // G8PTN: Enable GPIO1 as output
     rx.setGpioCtl(1, 0, 0);

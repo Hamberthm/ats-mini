@@ -30,7 +30,7 @@ Band bands[] =
   {"11M",  SW_BAND_TYPE, AM,  25600, 26100, 25850, 1, 4, 0},
   {"13M",  SW_BAND_TYPE, AM,  21500, 21900, 21650, 1, 4, 0},
   {"15M",  SW_BAND_TYPE, AM,  18900, 19100, 18950, 1, 4, 0},
-  {"16M",  SW_BAND_TYPE, AM,  17500, 18100, 17650, 1, 4, 0},
+  {"16M",  SW_BAND_TYPE, AM,  17400, 18100, 17650, 1, 4, 0},
   {"19M",  SW_BAND_TYPE, AM,  15100, 15900, 15450, 1, 4, 0},
   {"22M",  SW_BAND_TYPE, AM,  13500, 13900, 13650, 1, 4, 0},
   {"25M",  SW_BAND_TYPE, AM,  11000, 13000, 11850, 1, 4, 0},
@@ -82,7 +82,7 @@ Band *getCurrentBand() { return(&bands[bandIdx]); }
 #define MENU_AVC          9
 #define MENU_SOFTMUTE    10
 #define MENU_SETTINGS    11
-#define MENU_SCAN   	 12
+#define MENU_SCAN        12
 
 int8_t menuIdx = MENU_VOLUME;
 
@@ -100,7 +100,7 @@ static const char *menu[] =
   "AVC",
   "SoftMute",
   "Settings",
-  "Scan",
+//  "Scan",
 };
 
 //
@@ -140,7 +140,7 @@ static const char *settings[] =
   "Sleep",
   "Sleep Mode",
   "Load EiBi",
-  "Bluetooth",
+//  "Bluetooth",
   "Wi-Fi",
   "F. Autoscan",
   "About",
@@ -322,13 +322,7 @@ static const Step amSteps[] =
 };
 
 static const Step *steps[4] = { fmSteps, ssbSteps, ssbSteps, amSteps };
-static uint8_t stepIdx[4] = { 2, 5, 5, 1 };
-
-const Step *getCurrentStep(bool fast)
-{
-  uint8_t idx = stepIdx[currentMode];
-  return(&steps[currentMode][fast && isSSB()? ssbFastSteps[idx]:idx]);
-}
+static const uint8_t defaultStepIdx[4] = { 2, 5, 5, 1 };
 
 static int getLastStep(int mode)
 {
@@ -341,6 +335,12 @@ static int getLastStep(int mode)
   }
 
   return(0);
+}
+
+const Step *getCurrentStep(bool fast)
+{
+  uint8_t idx = bands[bandIdx].currentStepIdx > getLastStep(currentMode) ? defaultStepIdx[currentMode] : bands[bandIdx].currentStepIdx;
+  return(&steps[currentMode][fast && isSSB()? ssbFastSteps[idx]:idx]);
 }
 
 static uint8_t freqInputPos = 0;
@@ -416,12 +416,7 @@ static const Bandwidth *bandwidths[4] =
   fmBandwidths, ssbBandwidths, ssbBandwidths, amBandwidths
 };
 
-static uint8_t bwIdx[4] = { 0, 4, 4, 4 };
-
-const Bandwidth *getCurrentBandwidth()
-{
-  return(&bandwidths[currentMode][bwIdx[currentMode]]);
-}
+static const uint8_t defaultBwIdx[4] = { 0, 4, 4, 4 };
 
 static int getLastBandwidth(int mode)
 {
@@ -434,6 +429,11 @@ static int getLastBandwidth(int mode)
   }
 
   return(0);
+}
+
+const Bandwidth *getCurrentBandwidth()
+{
+  return(&bandwidths[currentMode][bands[bandIdx].bandwidthIdx > getLastBandwidth(currentMode) ? defaultBwIdx[currentMode] : bands[bandIdx].bandwidthIdx]);
 }
 
 static void setBandwidth()
@@ -645,18 +645,21 @@ bool tuneToMemory(const Memory *memory)
 {
   // Must have frequency
   if(!memory->freq) return(false);
+
   // Must have valid band index
   if(memory->band>=getTotalBands()) return(false);
+
   // Band must contain frequency and modulation
   if(!isMemoryInBand(&bands[memory->band], memory)) return(false);
+
   // Must differ from the current band, frequency and modulation
   if(memory->band==bandIdx &&
      memory->freq==bands[bandIdx].currentFreq &&
      memory->mode==bands[bandIdx].bandMode)
     return(true);
+
   // Save current band settings
   bands[bandIdx].currentFreq    = currentFrequency + currentBFO / 1000;
-  bands[bandIdx].currentStepIdx = stepIdx[currentMode];
 
   // Load frequency and modulation from memory slot
   bands[memory->band].currentFreq = memory->freq;
@@ -692,10 +695,10 @@ static void clickMemory(uint8_t idx, bool shortPress)
 
 void doStep(int dir)
 {
-  uint8_t idx = stepIdx[currentMode];
+  uint8_t idx = bands[bandIdx].currentStepIdx;
 
   idx = wrap_range(idx, dir, 0, getLastStep(currentMode));
-  bands[bandIdx].currentStepIdx = stepIdx[currentMode] = idx;
+  bands[bandIdx].currentStepIdx = idx;
 
   rx.setFrequencyStep(steps[currentMode][idx].step);
 
@@ -743,7 +746,8 @@ void doMode(int dir)
 
   // Save current band settings
   bands[bandIdx].currentFreq = currentFrequency + currentBFO / 1000;
-  bands[bandIdx].currentStepIdx = stepIdx[currentMode];
+  bands[bandIdx].currentStepIdx = defaultStepIdx[currentMode];
+  bands[bandIdx].bandwidthIdx = defaultBwIdx[currentMode];
   bands[bandIdx].bandMode = currentMode;
 
   // Enable the new band
@@ -772,7 +776,6 @@ void doBand(int dir)
 {
   // Save current band settings
   bands[bandIdx].currentFreq = currentFrequency + currentBFO / 1000;
-  bands[bandIdx].currentStepIdx = stepIdx[currentMode];
   bands[bandIdx].bandMode = currentMode;
 
   // Change band
@@ -784,10 +787,10 @@ void doBand(int dir)
 
 void doBandwidth(int dir)
 {
-  uint8_t idx = bwIdx[currentMode];
+  uint8_t idx = bands[bandIdx].bandwidthIdx;
 
   idx = wrap_range(idx, dir, 0, getLastBandwidth(currentMode));
-  bands[bandIdx].bandwidthIdx = bwIdx[currentMode] = idx;
+  bands[bandIdx].bandwidthIdx = idx;
   setBandwidth();
 }
 
@@ -960,20 +963,17 @@ void selectBand(uint8_t idx, bool drawLoadingSSB)
   bandIdx = min(idx, LAST_ITEM(bands));
   currentMode = bands[bandIdx].bandMode;
 
-  // Set tuning step
-  stepIdx[currentMode] = bands[bandIdx].currentStepIdx;
-
   // Load SSB patch as needed
   if(isSSB())
     loadSSB(getCurrentBandwidth()->idx, drawLoadingSSB);
   else
     unloadSSB();
 
-  // Set bandwidth for the current mode
-  setBandwidth();
-
   // Switch radio to the selected band
   useBand(&bands[bandIdx]);
+
+  // Set bandwidth for the current mode
+  setBandwidth();
 
   // Clear current station info (RDS/CB)
   clearStationInfo();
@@ -1090,7 +1090,7 @@ static void drawMode(int x, int y, int sx)
 static void drawStep(int x, int y, int sx)
 {
   int count = getLastStep(currentMode) + 1;
-  int idx   = stepIdx[currentMode] + count;
+  int idx   = bands[bandIdx].currentStepIdx + count;
 
   drawCommon(menu[MENU_STEP], x, y, sx, true);
 
@@ -1146,7 +1146,7 @@ static void drawBand(int x, int y, int sx)
 static void drawBandwidth(int x, int y, int sx)
 {
   int count = getLastBandwidth(currentMode) + 1;
-  int idx   = bwIdx[currentMode] + count;
+  int idx   = bands[bandIdx].bandwidthIdx + count;
 
   drawCommon(menu[MENU_BW], x, y, sx, true);
 

@@ -6,6 +6,8 @@
 
 The original schematics, BOM and Gerber files can be found at <https://oshwhub.com/sunnygold/esp32s3-si4732-shou-yin-ji>. A copy of the files is available at <https://github.com/esp32-si4732/esp32-si4732-oshwhub>
 
+No schematics available for other PCB versions currently sold, but you can find a brief overview [here](https://github.com/esp32-si4732/ats-mini/discussions/103#discussioncomment-13330603).
+
 ## Datasheets
 
 * ESP32-S3-WROOM-1 [1](https://www.espressif.com/sites/default/files/documentation/esp32-s3-wroom-1_wroom-1u_datasheet_en.pdf), [2](https://www.espressif.com/sites/default/files/documentation/esp32-s3_datasheet_en.pdf) - MCU SoC

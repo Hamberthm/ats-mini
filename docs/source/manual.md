@@ -215,7 +215,7 @@ The following comma separated information is sent out on the serial interface wh
 | 5        | bandName         | Band              | See the [bands table](#bands-table) |
 | 6        | currentMode      | Mode              | FM/LSB/USB/AM                       |
 | 7        | currentStepIdx   | Step              |                                     |
-| 8        | bwIdx            | Bandwidth         |                                     |
+| 8        | bandwidthIdx     | Bandwidth         |                                     |
 | 9        | agcIdx           | AGC/Attn          |                                     |
 | 10       | volume           | Volume            | 0 to 63 (0 = Mute)                  |
 | 11       | remoteRssi       | RSSI              | 0 to 127 dBuV                       |

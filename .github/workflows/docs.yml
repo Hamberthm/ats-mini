@@ -6,13 +6,16 @@ on:
       - main
     paths:
       - 'docs/**'
+      - 'changelog/**'
       - 'CHANGELOG.md'
+      - 'CONTRIBUTING.md'
       - '.github/workflows/docs.yml'
   push:
     branches:
       - main
     paths:
       - 'docs/**'
+      - 'changelog/**'
       - 'CHANGELOG.md'
       - 'CONTRIBUTING.md'
       - '.github/workflows/docs.yml'
@@ -42,6 +45,11 @@ jobs:
       # - name: Check the links
       #   run: |
       #     uv run sphinx-build -M linkcheck docs/source docs/build
+
+      - name: Compile the unreleased changelog
+        run: |
+          # shellcheck disable=SC2015
+          ls changelog/*.md && uv run towncrier build --keep --version Unreleased || true
 
       - name: Build the docs
         run: |

@@ -4,6 +4,25 @@ The user manual is available at <https://esp32-si4732.github.io/ats-mini/manual.
 
 <!-- towncrier release notes start -->
 
+## 2.28 (2025-07-01)
+
+
+### Added
+
+- Add UTC+5:30 offset for India (Asia/Kolkata). Users with offsets greater than 5:30 might need to readjust their timezone settings (menu indexes have been shifted).
+- Enable PSRAM using different build artifacts for OSPI and QSPI ESP32-S3 modules. For more info see <https://esp32-si4732.github.io/ats-mini/flash.html#firmware-files>.
+
+
+### Changed
+
+- Much better seek sensitivity (SI4735 library patch by @zhang-chong). [#129](https://github.com/esp32-si4732/ats-mini/issues/129)
+- 200kHz FM step now uses odd frequencies (99.1, 99.3, etc). [#161](https://github.com/esp32-si4732/ats-mini/issues/161)
+
+### Fixed
+
+- Fix loud clicks when changing bands/modes on the PCB version without the mute circuit. [#103](https://github.com/esp32-si4732/ats-mini/issues/103)
+- Do not shadow station names by zoomed menu in the seek mode. [#157](https://github.com/esp32-si4732/ats-mini/issues/157)
+
 ## 2.27 (2025-06-07)
 
 

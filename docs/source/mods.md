@@ -34,4 +34,5 @@ Note: a new hardware revision with the LM4809 headphone amplifier has been spott
 
 ## Other interesting mods
 
-* [Si4732 Mini & ATS-20+ Hybrid Radio](https://github.com/esp32-si4732/ats-mini/actions/runs/15095548341)
+* [Si4732 MiniRX Modifications](https://peterneufeld.wordpress.com/2025/06/13/si4732a-minirx-modifications/) (also see [#73](https://github.com/esp32-si4732/ats-mini/discussions/73))
+* [Si4732 Mini & ATS-20+ Hybrid Radio](https://www.youtube.com/watch?v=OyrTHNhbh58)

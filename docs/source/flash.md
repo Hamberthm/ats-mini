@@ -9,7 +9,11 @@ Before proceeding, please check whether the receiver board has [BOOT & RESET but
 ## Firmware files
 
 ```{hint}
-The firmware releases are available on [GitHub](https://github.com/esp32-si4732/ats-mini/releases).
+The firmware releases are available on [GitHub](https://github.com/esp32-si4732/ats-mini/releases). You'll need either OSPI or QSPI variant depending on the ESP32-S3 PSRAM type, see the following table:
+
+![](_static/esp32-psram-variants.png)
+
+With the right firmware variant you should see a non-zero PSRAM amount on the Settings->About system info screen.
 ```
 
 A firmware archive contains the following files:

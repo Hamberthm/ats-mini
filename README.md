@@ -7,6 +7,8 @@ Fast Autoscan in two modes:
 
 Enable in Menu > Settings > F. Autoscan
 
+NOTICE: If you're building this fork by yourself, make sure to ERASE the flash memory contents before flashing the firmware. This fork contains alterations on the settings storage order that could lead to unexpected behavior if flash is not erased.
+
 # ATS Mini
 
 ![](docs/source/_static/esp32-si4732-ui-theme.jpg)
